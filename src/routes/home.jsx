@@ -1,5 +1,9 @@
 import { useState, useMemo } from 'react'
 import { FilesViewer } from '../components/FilesViewer'
+import { TextField, Button } from '@mui/material'
+import Breadcrumbs from '@mui/material/Breadcrumbs';
+import Link from '@mui/material/Link';
+
 
 const fs = window.require('fs')
 const pathModule = window.require('path')
@@ -15,7 +19,7 @@ const formatSize = size => {
   )
 }
 
-function App() {
+function Home() {
   const [path, setPath] = useState(app.getAppPath())
 
   const files = useMemo(
@@ -41,19 +45,21 @@ function App() {
 
   const onBack = () => setPath(pathModule.dirname(path))
   const onOpen = folder => setPath(pathModule.join(path, folder))
+  const goto = folder => setPath(folder)
 
   const [searchString, setSearchString] = useState('')
   const filteredFiles = files.filter(s => s.name.startsWith(searchString))
 
   return (
     <div className="container mt-2">
-      <h4>{path}</h4>
-      <div className="form-group mt-4 mb-2">
-        <input
+      <NavLink p={path} />
+      <div className="mt-4 mb-2">
+        <TextField
           value={searchString}
+          variant="outlined"
           onChange={event => setSearchString(event.target.value)}
-          className="form-control form-control-sm"
-          placeholder="File search"
+          style={{width:'100%'}}
+          label="File search"
         />
       </div>
       <FilesViewer files={filteredFiles} onBack={onBack} onOpen={onOpen} />
@@ -61,4 +67,30 @@ function App() {
   )
 }
 
-export default App
+function NavLink({ p }) {
+  const handleClick = (val) => {
+    console.log(val)
+  }
+
+  let path = p.split('\\')
+
+  return (
+    <div role="presentation" onClick={handleClick}>
+      <Breadcrumbs aria-label="breadcrumb">
+        {
+          path.
+            map((v, i) => {
+              let name = path.
+                slice(0, i + 1).
+                reduce((pv, cv) => {
+                  return pv === "" ? cv : pv + '\\' + cv
+                }, '')
+              return <Button onClick={()=>handleClick({name})} key={name}>{v}</Button>
+            })
+        }
+      </Breadcrumbs>
+    </div>
+  )
+}
+
+export default Home
