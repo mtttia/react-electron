@@ -44,15 +44,18 @@ function Home() {
   )
 
   const onBack = () => setPath(pathModule.dirname(path))
-  const onOpen = folder => setPath(pathModule.join(path, folder))
+  const onOpen = folder => {
+    setPath(pathModule.join(path, folder))
+    setSearchString("")
+  }
   const goto = folder => setPath(folder)
 
   const [searchString, setSearchString] = useState('')
-  const filteredFiles = files.filter(s => s.name.startsWith(searchString))
+  const filteredFiles = files.filter(s => s.name.toUpperCase().startsWith(searchString.toUpperCase()))
 
   return (
     <div className="container mt-2">
-      <NavLink p={path} />
+      <NavLink p={path} updatePath={(p)=>{setPath(p)}}/>
       <div className="mt-4 mb-2">
         <TextField
           value={searchString}
@@ -67,9 +70,10 @@ function Home() {
   )
 }
 
-function NavLink({ p }) {
+function NavLink({ p, updatePath }) {
   const handleClick = (val) => {
-    console.log(val)
+    if(val.name)
+      updatePath(val.name)
   }
 
   let path = p.split('\\')
