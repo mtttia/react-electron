@@ -4,9 +4,6 @@ import { Link, Outlet, useLocation, useNavigate, Navigate } from 'react-router-d
 
 function App() {
   let location = useLocation().pathname
-  
-  if (location === '/')
-    return (<Navigate to="/home" />)
 
   return (
     <div>
